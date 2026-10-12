@@ -40,21 +40,21 @@ export default function About() {
               <p className="about-meta-value">{PERSONAL_INFO.location}</p>
             </div>
             <div className="about-meta-item">
-              <p className="about-meta-label">Dirección</p>
-              <p className="about-meta-value" style={{ fontSize: '13px' }}>
-                {PERSONAL_INFO.address}
-              </p>
-            </div>
-            <div className="about-meta-item">
-              <p className="about-meta-label">Teléfonos</p>
+              <p className="about-meta-label">Teléfono</p>
               <p className="about-meta-value">
-                {PERSONAL_INFO.phoneDisplay} / {PERSONAL_INFO.phoneSecondary}
+                {PERSONAL_INFO.phoneDisplay}
               </p>
             </div>
             <div className="about-meta-item">
               <p className="about-meta-label">Modalidad & Disponibilidad</p>
               <p className="about-meta-value">
                 {PERSONAL_INFO.modality} · {PERSONAL_INFO.availability}
+              </p>
+            </div>
+            <div className="about-meta-item">
+              <p className="about-meta-label">Idiomas</p>
+              <p className="about-meta-value">
+                {PERSONAL_INFO.languages}
               </p>
             </div>
           </div>

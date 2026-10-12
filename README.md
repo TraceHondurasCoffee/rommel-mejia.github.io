@@ -23,8 +23,7 @@ Portafolio web moderno de alto rendimiento desarrollado en **React + Vite**, con
   - Datos de identidad y contacto:
     - Identidad: `0801-1989-18369` | Edad: `37 años`
     - Ubicación: `Tegucigalpa, Francisco Morazán, Honduras 🇭🇳`
-    - Dirección: `Col. Country, 14 Avenida, 14 Calle, Casa #1354, Comayagüela`
-    - Teléfonos: `(+504) 9838-6363 / 2203-5585`
+    - Teléfono: `(+504) 9838-6363`
     - Modalidad: `Remoto / Híbrido / Presencial`
   - Tarjeta interactiva de desarrollador con chips: `Full Stack`, `SQL Server / Oracle`, `SOA & Microservicios`, `Cloud & Infraestructura`.
 - **Stack Tecnológico (Skills)**:

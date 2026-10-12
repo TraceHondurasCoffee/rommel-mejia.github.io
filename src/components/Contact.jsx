@@ -161,15 +161,15 @@ export default function Contact() {
               </div>
             </a>
 
-            {/* Teléfonos Fijo y Móvil */}
+            {/* Teléfono Directo */}
             <a href="tel:+50498386363" className="contact-card-link">
               <span className="contact-icon-symbol" style={{ color: 'var(--green)' }}>
                 <Phone size={22} />
               </span>
               <div>
-                <p className="contact-key-label">Teléfonos Directos</p>
+                <p className="contact-key-label">Teléfono Directo</p>
                 <p className="contact-val-text">
-                  {PERSONAL_INFO.phoneDisplay} / {PERSONAL_INFO.phoneSecondary}
+                  {PERSONAL_INFO.phoneDisplay}
                 </p>
               </div>
             </a>
@@ -185,17 +185,14 @@ export default function Contact() {
               </div>
             </a>
 
-            {/* Location & Address */}
+            {/* Location */}
             <div className="contact-card-link">
               <span className="contact-icon-symbol" style={{ color: 'var(--orange)' }}>
                 <MapPin size={22} />
               </span>
               <div>
-                <p className="contact-key-label">Ubicación & Dirección</p>
+                <p className="contact-key-label">Ubicación</p>
                 <p className="contact-val-text">{PERSONAL_INFO.location}</p>
-                <p style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '2px' }}>
-                  {PERSONAL_INFO.address}
-                </p>
               </div>
             </div>
           </div>
