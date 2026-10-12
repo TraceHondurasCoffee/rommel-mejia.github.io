@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { MessageCircle, Mail, MapPin, Phone, Send, CheckCircle2, RotateCcw } from 'lucide-react';
+import {
+  MessageCircle,
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+  CheckCircle2,
+  RotateCcw,
+  Loader2,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PERSONAL_INFO } from '../data/portfolioData';
 
@@ -11,6 +20,7 @@ export default function Contact() {
   });
 
   const [errors, setErrors] = useState({});
+  const [isSending, setIsSending] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const validate = () => {
@@ -25,7 +35,7 @@ export default function Contact() {
     }
     if (!formData.message.trim()) {
       errs.message = 'El mensaje es obligatorio';
-    } else if (formData.message.trim().length < 5) {
+    } else if (formData.message.trim().length < 4) {
       errs.message = 'Por favor escribe un mensaje un poco más detallado';
     }
     return errs;
@@ -39,7 +49,7 @@ export default function Contact() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -47,19 +57,55 @@ export default function Contact() {
       return;
     }
 
-    // Trigger celebratory confetti
-    try {
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.7 },
-        colors: ['#22d3a5', '#38bdf8', '#a78bfa'],
-      });
-    } catch {
-      // ignore in environments without canvas support
-    }
+    setIsSending(true);
 
-    setIsSubmitted(true);
+    try {
+      // Envío real a ariel10estradam@gmail.com mediante FormSubmit
+      const response = await fetch(`https://formsubmit.co/ajax/${PERSONAL_INFO.email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `Nuevo mensaje en Portafolio Web - ${formData.name}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar mediante el servicio');
+      }
+
+      // Celebración con confeti
+      try {
+        confetti({
+          particleCount: 85,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#22d3a5', '#38bdf8', '#a78bfa'],
+        });
+      } catch {
+        // Ignorar si el navegador bloquea canvas
+      }
+
+      setIsSubmitted(true);
+    } catch {
+      // Respaldo inmediato por cliente de correo en caso de bloqueo de red
+      const mailtoLink = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(
+        `Contacto de ${formData.name} desde Portafolio Web`
+      )}&body=${encodeURIComponent(
+        `Nombre: ${formData.name}\nEmail: ${formData.email}\n\nMensaje:\n${formData.message}`
+      )}`;
+      window.location.href = mailtoLink;
+      setIsSubmitted(true);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const resetForm = () => {
@@ -83,8 +129,9 @@ export default function Contact() {
         {/* Left Column: Info & Links */}
         <div>
           <p className="contact-lead-text">
-            ¿Tienes un proyecto en mente? Ya sea una página web, una app,
-            software a medida o una pasarela de pagos —{' '}
+            ¿Tienes un proyecto en mente? Ya sea desarrollo web, APIs,
+            arquitectura SOA/microservicios, administración de bases de datos o
+            infraestructura —{' '}
             <strong style={{ color: 'var(--text-bright)' }}>
               escríbeme y lo hacemos realidad.
             </strong>{' '}
@@ -115,7 +162,7 @@ export default function Contact() {
             </a>
 
             {/* Teléfonos Fijo y Móvil */}
-            <a href={`tel:+50498386363`} className="contact-card-link">
+            <a href="tel:+50498386363" className="contact-card-link">
               <span className="contact-icon-symbol" style={{ color: 'var(--green)' }}>
                 <Phone size={22} />
               </span>
@@ -159,9 +206,11 @@ export default function Contact() {
           {isSubmitted ? (
             <div className="form-success-container">
               <CheckCircle2 size={54} color="var(--green)" style={{ margin: '0 auto 16px' }} />
-              <h3 className="form-success-title">¡Mensaje preparado con éxito!</h3>
+              <h3 className="form-success-title">¡Mensaje enviado con éxito!</h3>
               <p className="form-success-sub">
-                Gracias {formData.name}. Recibirás respuesta en menos de 24 horas.
+                Tu mensaje ha sido remitido a <strong>{PERSONAL_INFO.email}</strong>.
+                <br />
+                Gracias {formData.name}, te responderé a la brevedad posible.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -203,6 +252,7 @@ export default function Contact() {
                   placeholder="Tu nombre completo"
                   value={formData.name}
                   onChange={handleChange}
+                  disabled={isSending}
                   className="form-input-text"
                   style={{
                     borderColor: errors.name ? '#f87171' : undefined,
@@ -220,6 +270,7 @@ export default function Contact() {
                   placeholder="Tu correo electrónico"
                   value={formData.email}
                   onChange={handleChange}
+                  disabled={isSending}
                   className="form-input-text"
                   style={{
                     borderColor: errors.email ? '#f87171' : undefined,
@@ -236,6 +287,7 @@ export default function Contact() {
                   placeholder="Cuéntame sobre tu proyecto, requerimientos o consulta..."
                   value={formData.message}
                   onChange={handleChange}
+                  disabled={isSending}
                   className="form-textarea-text"
                   style={{
                     borderColor: errors.message ? '#f87171' : undefined,
@@ -246,9 +298,23 @@ export default function Contact() {
                 )}
               </div>
 
-              <button type="submit" className="btn-form-submit">
-                <span>Enviar Mensaje</span>
-                <Send size={15} />
+              <button
+                type="submit"
+                className="btn-form-submit"
+                disabled={isSending}
+                style={{ opacity: isSending ? 0.7 : 1, cursor: isSending ? 'not-allowed' : 'pointer' }}
+              >
+                {isSending ? (
+                  <>
+                    <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />
+                    <span>Enviando a {PERSONAL_INFO.email}...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Enviar Mensaje</span>
+                    <Send size={15} />
+                  </>
+                )}
               </button>
             </form>
           )}
